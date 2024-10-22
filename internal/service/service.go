@@ -1,6 +1,9 @@
 package service
 
-import "net/http"
+import (
+	"github.com/seshoo/bookFinder/internal/repository"
+	"net/http"
+)
 
 type PageData struct {
 	Code  string
@@ -17,11 +20,15 @@ type Services struct {
 }
 
 type Deps struct {
-	DpUrlTmp string
+	Repositories repository.Repositories
+	DpUrlTmp     string
 }
 
 func NewServices(deps Deps) *Services {
-	clientService := NewClientService(http.DefaultClient)
+	// todo: configure http client
+	httpClient := http.DefaultClient
+
+	clientService := NewClientService(httpClient)
 	extractorService := NewExtractorService()
 
 	return &Services{

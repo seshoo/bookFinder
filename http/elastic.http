@@ -1,0 +1,21 @@
+### Health check
+GET http://localhost:{{port}}/_cluster/health?pretty
+
+### GET index settings
+GET http://localhost:{{port}}/{{index_name}}/_settings?pretty
+
+### GET index mappings
+http://localhost:{{port}}/{{index_name}}/_mapping?pretty
+
+### GET all documents
+GET http://localhost:{{port}}/{{index_name}}/_search?pretty
+Content-Type: application/json
+
+{
+   "query" : {
+        "match_all" : {}
+    }
+}
+
+### GET by id
+GET http://localhost:{{port}}/{{index_name}}/_doc/1?pretty

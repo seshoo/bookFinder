@@ -1,10 +1,8 @@
-package app
+package commands
 
 import (
 	"context"
-	"fmt"
 	"github.com/seshoo/bookFinder/internal/repository/elastic"
-	"github.com/seshoo/bookFinder/internal/service"
 	"github.com/seshoo/bookFinder/pkg/elasticsearch"
 	"os"
 )
@@ -18,8 +16,8 @@ type DataProvider struct {
 	UrlTemplate string `long:"dp-url-tmp" env:"DP_URL_TMP" default:"https://rutracker.net/forum/viewtopic.php?t=%s" description:"Template of url"`
 }
 
-type Options struct {
-	Dbg       bool       `long:"dbg" env:"DBG" description:"debug mode"`
+type CommonOpts struct {
+	Dbg       bool       `short:"d" long:"debug" description:"debug mode"`
 	LogConfig LogOptions `group:"logger" namespace:"logger" env-namespace:"LOGGER"`
 	Dp        DataProvider
 	Elastic   struct {
@@ -31,37 +29,30 @@ type Options struct {
 	} `group:"Elastic" namespace:"elastic" env-namespace:"ELASTIC"`
 }
 
-func Run(opts Options) error {
-	fmt.Printf("opts: %+v", opts)
+func (c *CommonOpts) initElasticRepository(ctx context.Context) (*elastic.ElasticRepository, error) {
 	var err error
 
 	db, err := elasticsearch.NewElastic(elasticsearch.Config{
-		Host:      opts.Elastic.Host,
-		Username:  opts.Elastic.Username,
-		Password:  opts.Elastic.Password,
-		IndexName: opts.Elastic.Index,
+		Host:      c.Elastic.Host,
+		Username:  c.Elastic.Username,
+		Password:  c.Elastic.Password,
+		IndexName: c.Elastic.Index,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	mapping, err := os.ReadFile(opts.Elastic.MappingConfig)
+	mapping, err := os.ReadFile(c.Elastic.MappingConfig)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = db.Prepare(context.Background(), mapping)
+	err = db.Prepare(ctx, mapping)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	repositories := elastic.NewElasticRepository(db)
-	services := service.NewServices(service.Deps{
-		DpUrlTmp:     opts.Dp.UrlTemplate,
-		Repositories: repositories,
-	})
 
-	_ = services
-
-	return nil
+	return repositories, nil
 }

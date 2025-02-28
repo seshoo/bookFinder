@@ -2,12 +2,12 @@ package service_test
 
 import (
 	"fmt"
+	"github.com/seshoo/bookFinder/internal/service"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/seshoo/bookFinder/internal/service"
 	"github.com/stretchr/testify/assert"
 )
 

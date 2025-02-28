@@ -1,9 +1,9 @@
 package service_test
 
 import (
+	"github.com/seshoo/bookFinder/internal/service"
 	"testing"
 
-	"github.com/seshoo/bookFinder/internal/service"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -3,9 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/jessevdk/go-flags"
 	"github.com/seshoo/bookFinder/internal/commands"
-	"os"
 )
 
 var opts struct {
